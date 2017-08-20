@@ -6,6 +6,7 @@ import distruction from '@/pages/distruction/index'
 Vue.use(Router)
 
 export default new Router({
+
   routes: [
 
     /**

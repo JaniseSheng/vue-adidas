@@ -1,7 +1,15 @@
 <template>
 <div class="main-wrapper" id='fullpage'>
   <div class="section first-wrapper">
+    <div class="title-icon" :class="{'bounceInLeft animated' :  isIconclass}">
+      <img style="width: 100%" src="./dash_1.png" alt="">
+    </div>
+    <div class='bg-wrapper' :class="{'bounceInUp animated' :  isBgclass}">
 
+    </div>
+    <div class='arrow-down' @click='hanldeClickToNext'>
+      <svg class='fadeOutDown animated infinite' viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3470"><path d="M512 870.4l-396.8-320-55.466667 68.266667L512 981.333333l456.533333-362.666667-51.2-68.266667L512 870.4zM512 614.4 115.2 294.4 59.733333 362.666667 512 725.333333l456.533333-362.666667-51.2-68.266667L512 614.4zM968.533333 106.666667l-51.2-68.266667L512 358.4 115.2 38.4 59.733333 106.666667 512 469.333333 968.533333 106.666667z" p-id="3471"></path></svg>
+    </div>
   </div>
   <div class="section menu-wrapper">
     <div class="close-menu" @click="handleClickBack">
@@ -35,10 +43,16 @@
 
 <script>
 import $ from 'jquery'
+import {
+  questWechat
+} from '../../api/index';
 import fullpage from 'fullpage.js'
 export default {
   data() {
-    return {}
+    return {
+      isBgclass: false,
+      isIconclass: false
+    }
   },
   mounted() {
     const that = this;
@@ -47,12 +61,62 @@ export default {
         const pageindex = that.$route.query.page;
         if (pageindex) {
           $.fn.fullpage.moveTo(pageindex);
+        } else {
+          that.isIconclass = true
+          setTimeout(() => {
+            that.isIconclass = false
+          }, 1000)
+        }
+      },
+      onLeave(index, nextIndex, direction) {
+        console.log(nextIndex);
+        if (nextIndex == '1') {
+          setTimeout(() => {
+            that.isIconclass = true
+            that.isBgclass = true
+          }, 200)
+          setTimeout(() => {
+            that.isIconclass = false
+            that.isBgclass = false
+          }, 2000)
         }
       }
     });
+
+    questWechat(location.href.split('#')[0]).then(res => {
+      wx.config({
+        debug: false,
+        appId: res.appId,
+        timestamp: res.timestamp,
+        nonceStr: res.nonceStr,
+        signature: res.signature,
+        jsApiList: ['scanQRCode']
+      });
+
+      wx.ready(function() {
+        wx.checkJsApi({
+          jsApiList: ['chooseImage'],
+          success: function(res) {
+            alert(res.errMsg);
+          }
+        });
+        wx.scanQRCode({
+          needResult: 0,
+          scanType: ['qrCode'],
+          success: function(res) {
+            this.wedata = res.resultStr
+            alert(res.resultStr)
+          }
+        })
+      });
+    })
+
   },
   methods: {
-    handleClickMenu(item){
+    hanldeClickToNext(){
+      $.fn.fullpage.moveTo(2);
+    },
+    handleClickMenu(item) {
       this.$router.push({
         name: '2',
         query: {
@@ -60,11 +124,11 @@ export default {
         }
       })
     },
-    handleClickBack(){
+    handleClickBack() {
       $.fn.fullpage.moveTo(1)
     }
   },
-  destroyed(){
+  destroyed() {
     $.fn.fullpage.destroy('all');
   }
 }
@@ -73,11 +137,20 @@ export default {
 <style lang='less' scoped>
 @import "../../styles/color.less";
 .first-wrapper {
-    background-image: url("./bg.png");
-    background-repeat: no-repeat;
-    background-size: cover;
     height: 100vh;
     z-index: 10;
+    background-color: @bg-color;
+}
+.bg-wrapper {
+    background-image: url("./bg.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
 }
 .menu-wrapper {
     background-color: @bg-color;
@@ -140,5 +213,30 @@ export default {
     bottom: 12px;
     left: 18px;
     width: 80px;
+}
+.title-icon {
+    position: absolute;
+    z-index: 100;
+    z-index: 100;
+    top: 0;
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+.arrow-down {
+    text-align: center;
+    position: absolute;
+    z-index: 2222;
+    bottom: 18px;
+    left: 0;
+    right: 0;
+    height: 24px;
+
+    svg {
+        height: 100%;
+        animation-duration: 1.5s;
+        fill: @primary-color;
+    }
 }
 </style>
