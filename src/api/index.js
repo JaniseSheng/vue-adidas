@@ -1,5 +1,9 @@
-import {axiosPost} from '../lib/ajax';
+import axios from 'axios';
+import {hostUrl} from '../lib/config';
 
 export const questWechat = (href)=> {
-  return axiosPost('getsignpackage.php', `url=${href}`)
+  const _url = `${hostUrl}getsignpackage.php?url=${href}`
+  return axios.get(_url).then(function(response) {
+    return response.data;
+  })
 }

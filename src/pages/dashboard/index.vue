@@ -101,7 +101,7 @@ export default {
           }
         });
         wx.scanQRCode({
-          needResult: 0,
+          needResult: 1,
           scanType: ['qrCode'],
           success: function(res) {
             this.wedata = res.resultStr

@@ -7,7 +7,7 @@ export const axiosPost = (url, params) => {
   const _axios = axios.create({
     timeout: 15000
   });
-  return _axios.post(_url, params).then(function(response) {
+  return _axios.get(_url, params).then(function(response) {
     return response.data;
   })
 }

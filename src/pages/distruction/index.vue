@@ -11,7 +11,6 @@
       </div>
       <div class="button-wrapper">
         <button type="button" class='button' @click='handleScranQrcode'><span>> 立即扫码</span></button>
-        <button type="button" class='button' @click='handleScranQrcodeHash'><span>> 立即扫码-hash</span></button>
       </div>
     </div>
     <p>{{wedata}}</p>
@@ -65,28 +64,7 @@ export default {
       })
     },
     handleScranQrcode() {
-      questWechat(location.href).then(res=> {
-        wx.config({
-          debug: false,
-          appId: res.appId,
-          timestamp: res.timestamp,
-          nonceStr: res.nonceStr,
-          signature: res.signature,
-          jsApiList: ['scanQRCode']
-        });
-        wx.scanQRCode({
-          needResult: 0,
-          scanType: ['qrCode'],
-          success: function(res) {
-            this.wedata = res.resultStr
-            alert(res.resultStr)
-          }
-        })
-      })
-    },
-    handleScranQrcodeHash() {
       questWechat(location.href.split('#')[0]).then(res=> {
-        console.log(res);
         wx.config({
           debug: false,
           appId: res.appId,
@@ -96,7 +74,7 @@ export default {
           jsApiList: ['scanQRCode']
         });
         wx.scanQRCode({
-          needResult: 0,
+          needResult: 1,
           scanType: ['qrCode'],
           success: function(res) {
             this.wedata = res.resultStr
