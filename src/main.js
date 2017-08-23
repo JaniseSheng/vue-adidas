@@ -6,6 +6,12 @@ import router from './router'
 import storage from '@/lib/storage';
 import '@/styles/global.less'
 import '~/fullpage.js/dist/jquery.fullpage.min.css'
+import '~/video.js/dist/video-js.css'
+import '~/vue-video-player/src/custom-theme.css'
+
+import VueVideoPlayer from 'vue-video-player'
+
+Vue.use(VueVideoPlayer)
 Vue.config.productionTip = false
 /* eslint-disable no-new */
   new Vue({

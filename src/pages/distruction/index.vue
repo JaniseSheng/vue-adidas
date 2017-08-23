@@ -1,58 +1,65 @@
 <template>
 <div class="main-wrapper">
-    <div class="close-menu" @click='handleClickBack'>
-      <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2933"><path d="M512 0C229.216 0 0 229.216 0 512s229.216 512 512 512 512-229.216 512-512S794.784 0 512 0zM723.2 642.752c22.112 22.112 22.112 58.336 0 80.448s-58.336 22.112-80.448 0L512 592.448 381.248 723.2c-22.112 22.112-58.336 22.112-80.448 0s-22.112-58.336 0-80.448L431.552 512 300.8 381.248c-22.112-22.112-22.112-58.336 0-80.448s58.336-22.112 80.448 0L512 431.552 642.752 300.8c22.112-22.112 58.336-22.112 80.448 0s22.112 58.336 0 80.448L592.448 512 723.2 642.752z" p-id="2934"></path></svg>
+  <div class="close-menu" @click='handleClickBack'>
+    <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11456"><path d="M512.008698 63.575967c-247.689219 0-448.459848 200.771653-448.459848 448.440405 0 247.669776 200.77063 448.441429 448.459848 448.441429 247.650333 0 448.441429-200.77063 448.441429-448.441429C960.449104 264.346597 759.658008 63.575967 512.008698 63.575967zM695.461917 715.852828 328.53706 715.852828c-33.760918 0-61.151755-6.997368-61.151755-40.767496 0-33.781384 27.390837-40.767496 61.151755-40.767496l366.924857 0c33.780361 0 61.150732 6.986111 61.150732 40.767496C756.612649 708.85546 729.242278 715.852828 695.461917 715.852828zM695.461917 552.783869 328.53706 552.783869c-33.760918 0-61.151755-7.006578-61.151755-40.767496 0-33.780361 27.390837-40.766472 61.151755-40.766472l366.924857 0c33.780361 0 61.150732 6.986111 61.150732 40.766472C756.612649 545.777291 729.242278 552.783869 695.461917 552.783869zM695.461917 389.714909 328.53706 389.714909c-33.760918 0-61.151755-6.997368-61.151755-40.767496 0-33.780361 27.390837-40.766472 61.151755-40.766472l366.924857 0c33.780361 0 61.150732 6.987135 61.150732 40.766472C756.612649 382.717542 729.242278 389.714909 695.461917 389.714909z" p-id="11457"></path></svg>
+  </div>
+  <div class="distruction-wrapper">
+    <img :src="require('./2-' + dis_index + '.png')" alt="" :class="{'bounceInUp animated' :  animate1}">
+    <div class="text-wrapper" :class="'info-wrapper' + dis_index">
+      <p v-if='dis_index != 0' class='info-1' :class="{'fadeInLeft animated' :  animate2}"><span>#CLOUDFOAM</span>ULTIMATE</p>
+      <p v-if='texts[dis_index].summary' class='info-2' v-html='texts[dis_index].summary' :class="{'fadeInRight animated' :  animate3}"></p>
+      <p class='info-3' v-html='texts[dis_index].label' :class="{'fadeInLeft animated' :  animate4}"></p>
     </div>
-    <div class="distruction-wrapper" :style="{'background-image':'url('+ require('./2-' + dis_index + '.png') +')'}">
-      <div class="text-wrapper">
-        <p v-if='texts[dis_index].title'>{{texts[dis_index].title}}</p>
-        <p v-if='texts[dis_index].summary'>{{texts[dis_index].summary}}</p>
-        <p>{{texts[dis_index].label}}</p>
-      </div>
-      <div class="button-wrapper">
-        <button type="button" class='button' @click='handleScranQrcode'><span>> 立即扫码</span></button>
-      </div>
+    <div class="button-wrapper" :class="{'bounceInUp animated' :  animate5}">
+      <button type="button" class='button' @click='handleScranQrcode'><span>> 立即扫码</span></button>
     </div>
-    <p>{{wedata}}</p>
+  </div>
 </div>
 </template>
 
 <script>
-import {questWechat} from '../../api/index';
+import {
+  questWechat
+} from '../../api/index';
+import {
+  getFileName
+} from '@/lib/jsFactory';
 export default {
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      vm.dis_index = to.query.name;
-    });
-  },
   data() {
     return {
-      wedata: '',
+      animate1: false,
+      animate2: false,
+      animate3: false,
+      animate4: false,
+      animate5: false,
       dis_index: 0,
       texts: [{
         label: '故障？艺术！不爱循规蹈矩 就爱生来好动</br>每个Moment都这么酷'
       }, {
-        title: '#CLOUDFOAM ULTIMATE',
         summary: '城 市 滑 行',
         label: '跳上滑板，闯入城市街头，</br>在喧闹中滑行穿梭。'
       }, {
-        title: '#CLOUDFOAM ULTIMATE',
         summary: '创 意 公 园',
         label: '才不是乱涂瞎画，城市街道那么多，</br>每面墙都替我表达。'
       }, {
-        title: '#CLOUDFOAM ULTIMATE',
         summary: '地 下 尬 舞',
         label: '蠢蠢欲动，在街头尬舞， </br>我和我的影子最潮。'
       }, {
-        title: '#CLOUDFOAM ULTIMATE',
-        summary: 'ULTIMATE 大 现 身',
+        summary: "<span style='letter-spacing: normal; margin-right:6px'>ULTIMATE</span>大现身",
         label: 'Ultimate大揭, 在城市里找到更酷的自我，</br>终极奥义竟是它。'
-      }],
-      appId: 'wx223be0d333565e9c',
-      timestamp: '1503205668',
-      nonceStr: 'Dx1kEMDshBGCZBnr',
-      signature: 'daf46738fd44661f8f6b8da1a90ca965c65e579b'
+      }]
     }
+  },
+  created() {
+    this.animate1 = true;
+    this.animate2 = true;
+    this.animate3 = true;
+    this.animate4 = true;
+    setTimeout(() => {
+      this.animate5 = true;
+    }, 500)
+    const data = this.$route.query;
+    this.dis_index = data.name
   },
   methods: {
     handleClickBack() {
@@ -64,7 +71,8 @@ export default {
       })
     },
     handleScranQrcode() {
-      questWechat(location.href.split('#')[0]).then(res=> {
+      const that = this;
+      questWechat(window.location.href.split('#')[0]).then(res => {
         wx.config({
           debug: false,
           appId: res.appId,
@@ -73,13 +81,37 @@ export default {
           signature: res.signature,
           jsApiList: ['scanQRCode']
         });
-        wx.scanQRCode({
-          needResult: 1,
-          scanType: ['qrCode'],
-          success: function(res) {
-            this.wedata = res.resultStr
-            alert(res.resultStr)
-          }
+        wx.ready(function () {
+          wx.checkJsApi({
+            jsApiList: ['chooseImage'],
+            success: function(res) {
+              alert(res.errMsg);
+            }
+          })
+          wx.scanQRCode({
+            needResult: 0,
+            scanType: ['qrCode'],
+            success: function(resqr) {
+              const item = resqr.resultStr.split('.')
+              if (['mp4', 'MP4', 'mov', 'jpg', 'png', 'jpeg'].indexOf(item[item.length - 1]) > -1) {
+                that.$router.push({
+                  name: '3',
+                  query: {
+                    name: that.dis_index,
+                    media: item[0],
+                    type: item[1]
+                  }
+                })
+              } else {
+                that.$router.push({
+                  name: '0',
+                  query: {
+                    page: 2
+                  }
+                })
+              }
+            }
+          })
         })
       })
     }
@@ -99,10 +131,12 @@ export default {
 .distruction-wrapper {
     width: 100%;
     height: 100%;
-    background-size: 100%;
-    background-position: 0, 0, 100%, 100%;
-    background-repeat: no-repeat;
     position: relative;
+    display: flex;
+    img {
+        width: 100%;
+        align-self: center;
+    }
 }
 .button-wrapper {
     position: absolute;
@@ -137,5 +171,25 @@ export default {
         width: 100%;
         fill: @primary-color;
     }
+}
+.info-wrapper0 {
+    text-align: center;
+
+}
+
+.info-1 {
+    color: @primary-color;
+    span {
+        font-weight: bold;
+        margin-right: 6px;
+    }
+}
+.info-2 {
+    font-size: 2rem;
+    letter-spacing: 10px;
+    margin: 8px 0 14px;
+}
+.info-3 {
+    line-height: 1.6;
 }
 </style>

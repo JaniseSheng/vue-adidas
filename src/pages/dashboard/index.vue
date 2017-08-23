@@ -8,7 +8,7 @@
 
     </div>
     <div class='arrow-down' @click='hanldeClickToNext'>
-      <svg class='fadeOutDown animated infinite' viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3470"><path d="M512 870.4l-396.8-320-55.466667 68.266667L512 981.333333l456.533333-362.666667-51.2-68.266667L512 870.4zM512 614.4 115.2 294.4 59.733333 362.666667 512 725.333333l456.533333-362.666667-51.2-68.266667L512 614.4zM968.533333 106.666667l-51.2-68.266667L512 358.4 115.2 38.4 59.733333 106.666667 512 469.333333 968.533333 106.666667z" p-id="3471"></path></svg>
+      <svg class='fadeOutUp animated infinite' viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="37574"><path d="M190.124969 453.976492c-11.727581 11.608386-30.726058 11.608386-42.454663 0-11.711208-11.592013-11.727581-30.419823 0-42.029232L490.761412 72.244394c11.728605-11.608386 30.743455-11.608386 42.471036 0l343.090083 339.702865c11.728605 11.608386 11.728605 30.419823 0 42.029232-11.728605 11.608386-30.726058 11.608386-42.454663 0.016373L511.99693 144.184867 190.124969 453.976492z" p-id="37575"></path><path d="M190.124969 653.549853c-11.727581 11.608386-30.726058 11.608386-42.454663 0-11.711208-11.592013-11.727581-30.419823 0-42.029232l343.090083-339.702865c11.728605-11.608386 30.743455-11.608386 42.471036 0L876.321508 611.520621c11.728605 11.608386 11.728605 30.419823 0 42.029232-11.728605 11.608386-30.726058 11.608386-42.454663 0.016373L511.99693 343.758228 190.124969 653.549853z" p-id="37576"></path><path d="M190.124969 853.123214c-11.727581 11.608386-30.726058 11.608386-42.454663 0-11.711208-11.592013-11.727581-30.419823 0-42.029232l343.090083-339.702865c11.728605-11.608386 30.743455-11.608386 42.471036 0l343.090083 339.702865c11.728605 11.608386 11.728605 30.419823 0 42.029232-11.728605 11.608386-30.726058 11.608386-42.454663 0.016373L511.99693 543.331589 190.124969 853.123214z" p-id="37577"></path></svg>
     </div>
   </div>
   <div class="section menu-wrapper">
@@ -17,20 +17,40 @@
     </div>
     <div class="menu-lists">
       <ul>
-        <li data-index='one' @click='handleClickMenu(0)'>
-          <span>此处有雷</span>
+        <li data-index='one' @click='handleClickMenu(0)' :class="{'active': menuActive0, 'fadeInLeft animated' :  isMenuActive}">
+          <div class="img-wrapper" style="left: -45%">
+            <p></p>
+            <img src="./menu0.png">
+          </div>
+          <span style="right: 40%">此处有雷</span>
         </li>
-        <li @click='handleClickMenu(1)'>
+        <li @click='handleClickMenu(1)' :class="{'active': menuActive1, 'fadeInRight animated' :  isMenuActive}">
+          <div class="img-wrapper">
+            <p></p>
+            <img src="./menu1.png" alt="">
+          </div>
           <span>城市滑行</span>
         </li>
-        <li @click='handleClickMenu(2)'>
-          <span>创意公园</span>
+        <li @click='handleClickMenu(2)' :class="{'active': menuActive2, 'fadeInLeft animated' :  isMenuActive}">
+          <div class="img-wrapper" style="left: -40%">
+            <p></p>
+            <img src="./menu2.png" alt="">
+          </div>
+          <span style="right: 20%">创意公园</span>
         </li>
-        <li @click='handleClickMenu(3)'>
-          <span>地下尬舞</span>
+        <li @click='handleClickMenu(3)' :class="{'active': menuActive3, 'fadeInRight animated' :  isMenuActive}">
+          <div class="img-wrapper">
+            <p></p>
+            <img src="./menu3.png" alt="">
+          </div>
+          <span style="left: 25%">地下尬舞</span>
         </li>
-        <li @click='handleClickMenu(4)'>
-          <span>ULTIMATE大现身</span>
+        <li @click='handleClickMenu(4)' :class="{'active': menuActive4, 'fadeInLeft animated' :  isMenuActive}">
+          <div class="img-wrapper" style="left: -45%">
+            <p></p>
+            <img src="./menu4.png" alt="">
+          </div>
+          <span style="right: 0%; letter-spacing:0">ULTIMATE大现身</span>
         </li>
       </ul>
     </div>
@@ -43,24 +63,43 @@
 
 <script>
 import $ from 'jquery'
-import {
-  questWechat
-} from '../../api/index';
 import fullpage from 'fullpage.js'
+import storage from '@/lib/storage';
+import {
+  visitCounts
+} from '@/api/index';
 export default {
   data() {
     return {
       isBgclass: false,
-      isIconclass: false
+      isIconclass: false,
+      isMenuActive: false,
+      menuActive0: false,
+      menuActive1: false,
+      menuActive2: false,
+      menuActive3: false,
+      menuActive4: false
+    }
+  },
+  created(){
+    for (let i = 0; i < 5; i++){
+      if (storage.get(`detail${i}`)) {
+        this[`menuActive${i}`] = true
+      }
     }
   },
   mounted() {
     const that = this;
+
     $('#fullpage').fullpage({
       afterRender(event) {
         const pageindex = that.$route.query.page;
         if (pageindex) {
           $.fn.fullpage.moveTo(pageindex);
+          that.isMenuActive = true;
+          setTimeout(() => {
+            that.isMenuActive = false
+          }, 1000)
         } else {
           that.isIconclass = true
           setTimeout(() => {
@@ -69,7 +108,6 @@ export default {
         }
       },
       onLeave(index, nextIndex, direction) {
-        console.log(nextIndex);
         if (nextIndex == '1') {
           setTimeout(() => {
             that.isIconclass = true
@@ -79,50 +117,40 @@ export default {
             that.isIconclass = false
             that.isBgclass = false
           }, 2000)
+        } else {
+          that.isMenuActive = true;
+          setTimeout(() => {
+            that.isMenuActive = false
+          }, 1000)
         }
       }
     });
-
-    questWechat(location.href.split('#')[0]).then(res => {
-      wx.config({
-        debug: false,
-        appId: res.appId,
-        timestamp: res.timestamp,
-        nonceStr: res.nonceStr,
-        signature: res.signature,
-        jsApiList: ['scanQRCode']
-      });
-
-      wx.ready(function() {
-        wx.checkJsApi({
-          jsApiList: ['chooseImage'],
-          success: function(res) {
-            alert(res.errMsg);
-          }
-        });
-        wx.scanQRCode({
-          needResult: 1,
-          scanType: ['qrCode'],
-          success: function(res) {
-            this.wedata = res.resultStr
-            alert(res.resultStr)
-          }
-        })
-      });
-    })
-
   },
   methods: {
     hanldeClickToNext(){
       $.fn.fullpage.moveTo(2);
     },
     handleClickMenu(item) {
-      this.$router.push({
-        name: '2',
-        query: {
-          name: item
-        }
+      const detail = storage.get(`detail${item}`)
+      visitCounts(`menu${item}`).then(res => {
+        console.log(res);
       })
+      if (detail) {
+        this.$router.push({
+          name: '3',
+          query: {
+            name: item,
+            media: detail
+          }
+        })
+      } else {
+        this.$router.push({
+          name: '2',
+          query: {
+            name: item
+          }
+        })
+      }
     },
     handleClickBack() {
       $.fn.fullpage.moveTo(1)
@@ -170,6 +198,7 @@ export default {
         height: 100%;
         li {
             height: 20%;
+            display: flex;
             position: relative;
             text-align: center;
             &[data-index='one'] {
@@ -192,8 +221,39 @@ export default {
                 height: 1px;
                 background-color: @text-color;
             }
+            .img-wrapper {
+              position: absolute;
+              top: 1px;
+              bottom: 0;
+              width: 150%;
+              p {
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                background-color: fade(@bg-color, 70%);
+              }
+              img {
+                height: 100%;
+                max-width: none !important;
+              }
+            }
             span {
-                line-height: calc(100vh / 5);
+                align-self: center;
+                line-height: calc(80vh / 5);
+                letter-spacing: 3px;
+                position: absolute;
+                color: #d2d2d2;
+                font-size: 1.1rem;
+            }
+            &.active {
+              p {
+                background-color: fade(@bg-color, 30%);
+              }
+              span {
+                color: @primary-color;
+              }
             }
         }
     }
@@ -219,6 +279,8 @@ export default {
     z-index: 100;
     z-index: 100;
     top: 0;
+    left: 0;
+    right: 0;
     display: flex;
     height: 100%;
     align-items: center;
@@ -228,13 +290,12 @@ export default {
     text-align: center;
     position: absolute;
     z-index: 2222;
-    bottom: 18px;
+    padding-bottom: 36px;
+    bottom: 0;
     left: 0;
     right: 0;
-    height: 24px;
-
     svg {
-        height: 100%;
+        height: 28px;
         animation-duration: 1.5s;
         fill: @primary-color;
     }
