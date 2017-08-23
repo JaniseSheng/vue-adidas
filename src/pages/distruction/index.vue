@@ -72,7 +72,7 @@ export default {
     },
     handleScranQrcode() {
       const that = this;
-      questWechat(window.location.href.split('#')[0]).then(res => {
+      questWechat(window.location.href.split('#')[0].replace(/&/g, '%26')).then(res => {
         wx.config({
           debug: false,
           appId: res.appId,
@@ -88,15 +88,15 @@ export default {
             success: function(resqr) {
               const item = resqr.resultStr.split('.')
               if (['mp4', 'MP4', 'mov', 'jpg', 'png', 'jpeg'].indexOf(item[item.length - 1]) > -1) {
-                window.location.href = `http://event.obstm.com/adidasShare?name=${that.dis_index}&media=${item[0]}&type=${item[1]}`
-                // that.$router.push({
-                //   name: '3',
-                //   query: {
-                //     name: that.dis_index,
-                //     media: item[0],
-                //     type: item[1]
-                //   }
-                // })
+                //window.location.href = `http://event.obstm.com/adidasShare?name=${that.dis_index}&media=${item[0]}&type=${item[1]}`
+                that.$router.push({
+                  name: '3',
+                  query: {
+                    name: that.dis_index,
+                    media: item[0],
+                    type: item[1]
+                  }
+                })
               } else {
                 that.$router.push({
                   name: '0',
