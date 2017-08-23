@@ -46,16 +46,15 @@ export default {
   },
   created() {
     //分享
-    setTimeout(()=>{
-      this.handleWechatShare();
-    }, 500)
+    this.handleWechatShare();
     const data = this.$route.query;
     const _deltal = 'detail' + parseInt(data.name)
     // 统计浏览数
     visitCounts(_deltal).then(res => {
       console.log(res);
     })
-    storage.set(`detail${data.name}`, data.media)
+    const storageItem = data.media + '.' + data.type
+    storage.set(`detail${data.name}`, storageItem)
     this.detail_index = data.name
     this.media = './upload/' + data.media + '.' + data.type
     this.playerOptions.sources[0].src = this.media
@@ -75,8 +74,8 @@ export default {
       })
     },
     handleWechatShare() {
-      const url = location.href
-      questWechat(url.split('#')[0]).then(res => {
+      const url = window.location.href.replace(/&/g, '%26');
+      questWechat(url).then(res => {
         wx.config({
           debug: false,
           appId: res.appId,
@@ -92,18 +91,16 @@ export default {
           imgUrl: 'http://event.obstm.com/upload/AREA31502076803.jpg', //分享图，默认当相对路径处理，所以使用绝对路径的的话，“http://”协议前缀必须在。
           desc: '你对页面的描述', //摘要,如果分享到朋友圈的话，不显示摘要。
           title: '分享卡片的标题', //分享卡片标题
-          link: 'window.location.href', //分享出去后的链接，这里可以将链接设置为另一个页面。
+          link: url, //分享出去后的链接，这里可以将链接设置为另一个页面。
           success: function() { //分享成功后的回调函数
           },
           cancel: function() {
             // 用户取消分享后执行的回调函数
           }
         }
-        wx.ready(function () {
-          wx.onMenuShareAppMessage(share_config);
-          wx.onMenuShareTimeline(share_config);
-          wx.onMenuShareQQ(share_config);
-        })
+        wx.onMenuShareAppMessage(share_config);
+        wx.onMenuShareTimeline(share_config);
+        wx.onMenuShareQQ(share_config);
       })
     }
   }

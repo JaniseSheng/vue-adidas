@@ -136,13 +136,15 @@ export default {
         console.log(res);
       })
       if (detail) {
-        this.$router.push({
-          name: '3',
-          query: {
-            name: item,
-            media: detail
-          }
-        })
+        window.location.href = `http://event.obstm.com/adidasShare?name=${item}&media=${detail.split('.')[0]}&type=${detail.split('.')[1]}`
+        // this.$router.push({
+        //   name: '3',
+        //   query: {
+        //     name: item,
+        //     media: detail.split('.')[0],
+        //     type: detail.split('.')[1]
+        //   }
+        // })
       } else {
         this.$router.push({
           name: '2',
