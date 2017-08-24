@@ -87,7 +87,7 @@ export default {
             scanType: ['qrCode'],
             success: function(resqr) {
               const item = resqr.resultStr.split('.')
-              if (['mp4', 'MP4', 'mov', 'jpg', 'png', 'jpeg'].indexOf(item[item.length - 1]) > -1) {
+              if (['mp4', 'MP4', 'mov', 'webm', 'ogg', 'jpg', 'gif', 'png', 'jpeg'].indexOf(item[item.length - 1]) > -1) {
                 window.location.href = `http://event.obstm.com/adidasShare?name=${that.dis_index}&media=${item[0]}&type=${item[1]}`
                 // that.$router.push({
                 //   name: '3',

@@ -74,7 +74,7 @@ export default {
       })
     },
     handleWechatShare() {
-      const url = window.location.href.split('#').replace(/&/g, '%26');
+      const url = window.location.href.split('#')
       questWechat(url).then(res => {
         wx.config({
           debug: false,
