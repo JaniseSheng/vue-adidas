@@ -88,10 +88,10 @@ export default {
             success: function(resqr) {
               const item = resqr.resultStr.split('.')
               if (['mp4', 'MP4', 'mov', 'webm', 'ogg', 'jpg', 'gif', 'png', 'jpeg'].indexOf(item[item.length - 1]) > -1) {
-                window.location.href = `http://event.obstm.com/adidasShare?name=${that.dis_index}&media=${item[0]}&type=${item[1]}`
+                window.location.href = `http://event.obstm.com/adidasShare.html?content=${that.dis_index}_${item[0]}_${item[1]}`
                 // that.$router.push({
                 //   name: '3',
-                //   query: {
+                //   query
                 //     name: that.dis_index,
                 //     media: item[0],
                 //     type: item[1]
