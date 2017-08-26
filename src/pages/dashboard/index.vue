@@ -68,6 +68,7 @@ import storage from '@/lib/storage';
 import {
   visitCounts
 } from '@/api/index';
+import {hostUrl} from '@/lib/config'
 export default {
   data() {
     return {
@@ -81,8 +82,8 @@ export default {
       menuActive4: false
     }
   },
-  created(){
-    for (let i = 0; i < 5; i++){
+  created() {
+    for (let i = 0; i < 5; i++) {
       if (storage.get(`detail${i}`)) {
         this[`menuActive${i}`] = true
       }
@@ -90,10 +91,11 @@ export default {
   },
   mounted() {
     const that = this;
-
     $('#fullpage').fullpage({
       afterRender(event) {
-        const pageindex = that.$route.query.page;
+        var str = '{' + that.$route.path.replace('/', '"').replace(/k/g, '":').replace(/w/g, ',"') + '}'
+        const url = JSON.parse(str)
+        const pageindex = url.page + 1
         if (pageindex) {
           $.fn.fullpage.moveTo(pageindex);
           that.isMenuActive = true;
@@ -127,32 +129,26 @@ export default {
     });
   },
   methods: {
-    hanldeClickToNext(){
+    hanldeClickToNext() {
       $.fn.fullpage.moveTo(2);
     },
     handleClickMenu(item) {
-      const detail = storage.get(`detail${item}`)
+      /**
+       * 后台统计访问数
+       **/
       visitCounts(`menu${item}`).then(res => {
         console.log(res);
       })
+
+      const detail = storage.get(`detail${item}`)
+
       if (detail) {
-        window.location.href = `http://event.obstm.com/adidasShare.html?content=${item}_${detail.split('.')[0]}_${detail.split('.')[1]}`
-        // this.$router.push({
-        //   name: '3',
-        //   query: {
-        //     name: item,
-        //     media: detail.split('.')[0],
-        //     type: detail.split('.')[1]
-        //   }
-        // })
+        //window.location.href = `${hostUrl}/pagek3wmenuk${item}wmediak${detail.split('.')[0]}wtypek${detail.split('.')[1]}`
+        this.$router.push(`/pagek3wmenuk${item}wmediak${detail.split('.')[0]}wtypek${detail.split('.')[1]}`)
       } else {
-        this.$router.push({
-          name: '2',
-          query: {
-            name: item
-          }
-        })
+        this.$router.push(`/pagek2wmenuk${item}`)
       }
+     this.$router.go(0)
     },
     handleClickBack() {
       $.fn.fullpage.moveTo(1)
@@ -224,22 +220,22 @@ export default {
                 background-color: @text-color;
             }
             .img-wrapper {
-              position: absolute;
-              top: 1px;
-              bottom: 0;
-              width: 150%;
-              p {
                 position: absolute;
-                left: 0;
-                top: 0;
+                top: 1px;
                 bottom: 0;
-                right: 0;
-                background-color: fade(@bg-color, 70%);
-              }
-              img {
-                height: 100%;
-                max-width: none !important;
-              }
+                width: 150%;
+                p {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    bottom: 0;
+                    right: 0;
+                    background-color: fade(@bg-color, 70%);
+                }
+                img {
+                    height: 100%;
+                    max-width: none !important;
+                }
             }
             span {
                 align-self: center;
@@ -250,12 +246,12 @@ export default {
                 font-size: 1.1rem;
             }
             &.active {
-              p {
-                background-color: fade(@bg-color, 30%);
-              }
-              span {
-                color: @primary-color;
-              }
+                p {
+                    background-color: fade(@bg-color, 30%);
+                }
+                span {
+                    color: @primary-color;
+                }
             }
         }
     }

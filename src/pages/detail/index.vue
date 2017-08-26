@@ -10,9 +10,9 @@
     <img v-if="type == 'img'" :src="media" alt="" style="width: 100%">
   </div>
 
-  <div class="close-wrapper">
+  <!-- <div class="close-wrapper">
     <svg @click='handleClickBack' viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2933"><path d="M512 0C229.216 0 0 229.216 0 512s229.216 512 512 512 512-229.216 512-512S794.784 0 512 0zM723.2 642.752c22.112 22.112 22.112 58.336 0 80.448s-58.336 22.112-80.448 0L512 592.448 381.248 723.2c-22.112 22.112-58.336 22.112-80.448 0s-22.112-58.336 0-80.448L431.552 512 300.8 381.248c-22.112-22.112-22.112-58.336 0-80.448s58.336-22.112 80.448 0L512 431.552 642.752 300.8c22.112-22.112 58.336-22.112 80.448 0s22.112 58.336 0 80.448L592.448 512 723.2 642.752z" p-id="2934"></path></svg>
-  </div>
+  </div> -->
 
 </div>
 </template>
@@ -45,20 +45,23 @@ export default {
     }
   },
   created() {
+    var str = '{' + this.$route.path.replace('/', '"').replace(/k/g,'":').replace(/w/g,',"') + '}'
+    const url = JSON.parse(str)
+
     //分享
     this.handleWechatShare();
-    const data = this.$route.query;
-    const _deltal = 'detail' + parseInt(data.name)
+
+    const _deltal = 'detail' + parseInt(url.menu)
     // 统计浏览数
     visitCounts(_deltal).then(res => {
       console.log(res);
     })
-    const storageItem = data.media + '.' + data.type
-    storage.set(`detail${data.name}`, storageItem)
-    this.detail_index = data.name
-    this.media = './upload/' + data.media + '.' + data.type
+    const storageItem = url.media + '.' + url.type
+    storage.set(`detail${url.name}`, storageItem)
+    this.detail_index = url.name
+    this.media = './upload/' + url.media + '.' + url.type
     this.playerOptions.sources[0].src = this.media
-    if (['mp4', 'mov'].indexOf(data.type) > -1) {
+    if (['mp4', 'mov'].indexOf(url.type) > -1) {
       this.type = 'video'
     } else {
       this.type = 'img'
@@ -66,15 +69,10 @@ export default {
   },
   methods: {
     handleClickBack() {
-      this.$router.push({
-        name: '0',
-        query: {
-          page: 2
-        }
-      })
+      this.$router.push(`/pagek2`)
     },
     handleWechatShare() {
-      const url = window.location.href.split('#')
+      const url = window.location.href.split('#')[0]
       questWechat(url).then(res => {
         wx.config({
           debug: false,
@@ -82,25 +80,50 @@ export default {
           timestamp: res.timestamp,
           nonceStr: res.nonceStr,
           signature: res.signature,
-          jsApiList: ['onMenuShareTimeline',
-            'onMenuShareAppMessage',
-            'onMenuShareQQ'
+          jsApiList: ['checkJsApi', 'onMenuShareTimeline',
+            'onMenuShareAppMessage'
           ]
         });
-        const share_config = {
-          imgUrl: 'http://event.obstm.com/upload/AREA31502076803.jpg', //分享图，默认当相对路径处理，所以使用绝对路径的的话，“http://”协议前缀必须在。
-          desc: '你对页面的描述', //摘要,如果分享到朋友圈的话，不显示摘要。
-          title: '分享卡片的标题', //分享卡片标题
-          link: url, //分享出去后的链接，这里可以将链接设置为另一个页面。
-          success: function() { //分享成功后的回调函数
-          },
-          cancel: function() {
-            // 用户取消分享后执行的回调函数
-          }
-        }
-        wx.onMenuShareAppMessage(share_config);
-        wx.onMenuShareTimeline(share_config);
-        wx.onMenuShareQQ(share_config);
+        wx.ready(function() {
+          const imgUrl = 'http://event.obstm.com/upload/AREA31502076803.jpg'
+          var link = window.location.href
+
+          wx.onMenuShareTimeline({
+            title: '这是一个自定义的标题！',
+            link: link,
+            imgUrl: imgUrl, // 自定义图标
+            trigger: function(res) {
+              // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回.
+              //alert('click shared');
+            },
+            success: function(res) {
+              //alert('shared success');
+              //some thing you should do
+            },
+            cancel: function(res) {
+              //alert('shared cancle');
+            },
+            fail: function(res) {
+              //alert(JSON.stringify(res));
+            }
+          });
+
+          wx.onMenuShareAppMessage({
+            title: '这是一个自定义的标题！', // 分享标题
+            desc: '这是一个自定义的描述！', // 分享描述
+            link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: imgUrl, // 自定义图标
+            type: 'link', // 分享类型,music、video或link，不填默认为link
+            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+            success: function() {
+              // 用户确认分享后执行的回调函数
+            },
+            cancel: function() {
+              // 用户取消分享后执行的回调函数
+            }
+          })
+        });
+
       })
     }
   }

@@ -3,7 +3,7 @@ import {hostUrl} from './config';
 import storage from '@/lib/storage';
 
 export const axiosPost = (url, params) => {
-  const _url = hostUrl + url;
+  const _url = hostUrl + '/' + url;
   const _axios = axios.create({
     timeout: 15000
   });
