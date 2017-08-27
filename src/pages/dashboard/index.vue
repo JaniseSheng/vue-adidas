@@ -68,6 +68,9 @@ import storage from '@/lib/storage';
 import {
   visitCounts
 } from '@/api/index';
+import {
+  mapState
+} from 'vuex'
 export default {
   data() {
     return {
@@ -88,9 +91,13 @@ export default {
       }
     }
   },
+  computed: {
+  ...mapState({
+    loginStatus: state => state.userInfo.loginStatus
+  })
+},
   mounted() {
     const that = this;
-
     $('#fullpage').fullpage({
       afterRender(event) {
         const pageindex = that.$route.query.page;

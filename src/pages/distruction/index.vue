@@ -19,6 +19,8 @@
 
 <script>
 import wx from 'weixin-js-sdk'
+import device from 'device.js'
+import storage from '@/lib/storage'
 import {
   questWechat
 } from '../../api/index';
@@ -52,6 +54,7 @@ export default {
     }
   },
   created() {
+    console.log(device);
     this.animate1 = true;
     this.animate2 = true;
     this.animate3 = true;
@@ -61,10 +64,15 @@ export default {
     }, 500)
     const data = this.$route.query;
     this.dis_index = data.name
-
-    questWechat(window.location.href.split('#')[0].replace(/&/g, '%26')).then(res => {
+    let url = ''
+    if (device.ios()) {
+      url = this.$store.state.userInfo.url.split('#')[0]
+    } else {
+      url = window.location.href.split('#')[0]
+    }
+    questWechat(url).then(res => {
       wx.config({
-        debug: false,
+        debug: true,
         appId: res.appId,
         timestamp: res.timestamp,
         nonceStr: res.nonceStr,
@@ -93,7 +101,7 @@ export default {
             //window.location.href = `http://event.obstm.com/adidasShare?name=${that.dis_index}&media=${item[0]}&type=${item[1]}`
             that.$router.push({
               name: '3',
-              query: {
+              params: {
                 name: that.dis_index,
                 media: item[0],
                 type: item[1]

@@ -29,7 +29,8 @@ module.exports = {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
       'base': resolve('src/base'),
-      '~': resolve('node_modules')
+      '~': resolve('node_modules'),
+      'device': resolve('src/vender/device.min.js')
     }
   },
 

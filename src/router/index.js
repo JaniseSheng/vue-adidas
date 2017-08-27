@@ -25,7 +25,7 @@ export default new Router({
       component: distruction
     },
     {
-      path: '/detail',
+      path: '/detail/:name/:media/:type',
       name: '3',
       component: detail
     },

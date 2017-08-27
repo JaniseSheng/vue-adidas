@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import wx from 'weixin-js-sdk'
+import device from 'device.js'
 import {
   visitCounts,
   questWechat
@@ -45,9 +47,10 @@ export default {
     }
   },
   created() {
-    //分享
+    //分享config
+    this.wechartShareConfig();
     this.handleWechatShare();
-    const data = this.$route.query;
+    const data = this.$route.params;
     const _deltal = 'detail' + parseInt(data.name)
     // 统计浏览数
     visitCounts(_deltal).then(res => {
@@ -73,34 +76,79 @@ export default {
         }
       })
     },
-    handleWechatShare() {
-      const url = window.location.href.split('#').replace(/&/g, '%26')
+
+    wechartShareConfig() {
+      let url = ''
+      if (device.ios()) {
+        url = this.$store.state.userInfo.url.split('#')[0]
+      } else {
+        url = window.location.href.split('#')[0]
+      }
       questWechat(url).then(res => {
         wx.config({
-          debug: false,
+          debug: true,
           appId: res.appId,
           timestamp: res.timestamp,
           nonceStr: res.nonceStr,
           signature: res.signature,
-          jsApiList: ['onMenuShareTimeline',
-            'onMenuShareAppMessage',
-            'onMenuShareQQ'
+          jsApiList: ['checkJsApi', 'onMenuShareTimeline',
+            'onMenuShareAppMessage'
           ]
+        })
+      })
+    },
+    handleWechatShare() {
+      url = window.location.href.split('#')[0]
+      questWechat(url).then(res => {
+        wx.config({
+          debug: true,
+          appId: res.appId,
+          timestamp: res.timestamp,
+          nonceStr: res.nonceStr,
+          signature: res.signature,
+          jsApiList: ['checkJsApi', 'onMenuShareTimeline',
+            'onMenuShareAppMessage'
+          ]
+        })
+      })
+      wx.ready(function() {
+        const imgUrl = 'http://event.obstm.com/upload/AREA31502076803.jpg'
+        var link = window.location.href
+
+        wx.onMenuShareTimeline({
+          title: '这是一个自定义的标题！',
+          link: link,
+          imgUrl: imgUrl, // 自定义图标
+          trigger: function(res) {
+            // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回.
+            //alert('click shared');
+          },
+          success: function(res) {
+            //alert('shared success');
+            //some thing you should do
+          },
+          cancel: function(res) {
+            //alert('shared cancle');
+          },
+          fail: function(res) {
+            //alert(JSON.stringify(res));
+          }
         });
-        const share_config = {
-          imgUrl: 'http://event.obstm.com/upload/AREA31502076803.jpg', //分享图，默认当相对路径处理，所以使用绝对路径的的话，“http://”协议前缀必须在。
-          desc: '你对页面的描述', //摘要,如果分享到朋友圈的话，不显示摘要。
-          title: '分享卡片的标题', //分享卡片标题
-          link: url, //分享出去后的链接，这里可以将链接设置为另一个页面。
-          success: function() { //分享成功后的回调函数
+
+        wx.onMenuShareAppMessage({
+          title: '这是一个自定义的标题！', // 分享标题
+          desc: '这是一个自定义的描述！', // 分享描述
+          link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          imgUrl: imgUrl, // 自定义图标
+          type: 'link', // 分享类型,music、video或link，不填默认为link
+          dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+          success: function() {
+            // 用户确认分享后执行的回调函数
           },
           cancel: function() {
             // 用户取消分享后执行的回调函数
           }
-        }
-        wx.onMenuShareAppMessage(share_config);
-        wx.onMenuShareTimeline(share_config);
-        wx.onMenuShareQQ(share_config);
+        })
       })
     }
   }
