@@ -112,7 +112,7 @@ export default {
         })
       })
       wx.ready(function() {
-        const imgUrl = 'http://event.obstm.com/upload/AREA31502076803.jpg'
+        const imgUrl = 'http://ultimate.obstm.com/upload/AREA31502076803.jpg'
         var link = window.location.href
 
         wx.onMenuShareTimeline({

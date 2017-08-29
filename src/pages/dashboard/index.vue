@@ -159,9 +159,9 @@ export default {
         })
       })
       wx.ready(function() {
-        const imgUrl = 'http://event.obstm.com/upload/shareIcon.jpg'
+        const imgUrl = 'http://ultimate.obstm.com/upload/shareIcon.jpg'
         const _localInfo = that.localInfo.substring(1,that.localInfo.length);
-        var link = `http://event.obstm.com/?stroge=${_localInfo}`
+        var link = `http://ultimate.obstm.com/?stroge=${_localInfo}`
         wx.onMenuShareTimeline({
           title: 'This is ULTIMATE', //分享卡片标题
           link: link,
@@ -210,7 +210,7 @@ export default {
         console.log(res);
       })
       if (detail) {
-        window.location.href = `http://event.obstm.com/adidasShare?content=${item}_${detail.split('.')[0]}_${detail.split('.')[1]}`
+        window.location.href = `http://ultimate.obstm.com/adidasShare?content=${item}_${detail.split('.')[0]}_${detail.split('.')[1]}`
         // this.$router.push({
         //   name: '3',
         //   query: {
