@@ -6,3 +6,4 @@ const makeAction = (type) => {
 
 // ------------------- 设置登录信息 -------------------------
 export const setUrl = makeAction(types.SET_URL)
+export const markShare = makeAction(types.MARK_SHARE)

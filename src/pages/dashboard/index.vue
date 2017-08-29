@@ -5,7 +5,7 @@
       <img style="width: 100%" src="./dash_1.png" alt="">
     </div>
     <div class='bg-wrapper' :class="{'bounceInUp animated' :  isBgclass}">
-
+      <img src="./text.png" alt="" style="position:absolute; width: 50%; left:0;right:0;bottom: 110px;margin:auto">
     </div>
     <div class='arrow-down' @click='hanldeClickToNext'>
       <svg class='fadeOutUp animated infinite' viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="37574"><path d="M190.124969 453.976492c-11.727581 11.608386-30.726058 11.608386-42.454663 0-11.711208-11.592013-11.727581-30.419823 0-42.029232L490.761412 72.244394c11.728605-11.608386 30.743455-11.608386 42.471036 0l343.090083 339.702865c11.728605 11.608386 11.728605 30.419823 0 42.029232-11.728605 11.608386-30.726058 11.608386-42.454663 0.016373L511.99693 144.184867 190.124969 453.976492z" p-id="37575"></path><path d="M190.124969 653.549853c-11.727581 11.608386-30.726058 11.608386-42.454663 0-11.711208-11.592013-11.727581-30.419823 0-42.029232l343.090083-339.702865c11.728605-11.608386 30.743455-11.608386 42.471036 0L876.321508 611.520621c11.728605 11.608386 11.728605 30.419823 0 42.029232-11.728605 11.608386-30.726058 11.608386-42.454663 0.016373L511.99693 343.758228 190.124969 653.549853z" p-id="37576"></path><path d="M190.124969 853.123214c-11.727581 11.608386-30.726058 11.608386-42.454663 0-11.711208-11.592013-11.727581-30.419823 0-42.029232l343.090083-339.702865c11.728605-11.608386 30.743455-11.608386 42.471036 0l343.090083 339.702865c11.728605 11.608386 11.728605 30.419823 0 42.029232-11.728605 11.608386-30.726058 11.608386-42.454663 0.016373L511.99693 543.331589 190.124969 853.123214z" p-id="37577"></path></svg>
@@ -22,35 +22,35 @@
             <p></p>
             <img src="./menu0.png">
           </div>
-          <span style="right: 40%">此处有雷</span>
+          <span style="right: 40%"><img :src="require(menuActive0 ? './menu0c.png' : './menu0b.png')" style="vertical-align: middle; width: 90px"></span>
         </li>
         <li @click='handleClickMenu(1)' :class="{'active': menuActive1, 'fadeInRight animated' :  isMenuActive}">
           <div class="img-wrapper">
             <p></p>
             <img src="./menu1.png" alt="">
           </div>
-          <span>城市滑行</span>
+          <span><img :src="require(menuActive1 ? './menu1c.png' : './menu1b.png')" style="vertical-align: middle; width: 90px"></span>
         </li>
         <li @click='handleClickMenu(2)' :class="{'active': menuActive2, 'fadeInLeft animated' :  isMenuActive}">
           <div class="img-wrapper" style="left: -40%">
             <p></p>
             <img src="./menu2.png" alt="">
           </div>
-          <span style="right: 20%">创意公园</span>
+          <span style="right: 20%"><img :src="require(menuActive2 ? './menu2c.png' : './menu2b.png')" style="vertical-align: middle; width: 90px"></span>
         </li>
         <li @click='handleClickMenu(3)' :class="{'active': menuActive3, 'fadeInRight animated' :  isMenuActive}">
           <div class="img-wrapper">
             <p></p>
             <img src="./menu3.png" alt="">
           </div>
-          <span style="left: 25%">地下尬舞</span>
+          <span style="left: 25%"><img :src="require(menuActive3 ? './menu3c.png' : './menu3b.png')" style="vertical-align: middle; width: 90px"></span>
         </li>
         <li @click='handleClickMenu(4)' :class="{'active': menuActive4, 'fadeInLeft animated' :  isMenuActive}">
           <div class="img-wrapper" style="left: -45%">
             <p></p>
             <img src="./menu4.png" alt="">
           </div>
-          <span style="right: 0%; letter-spacing:0">ULTIMATE大现身</span>
+          <span style="right: 0%; letter-spacing:0"><img :src="require(menuActive4 ? './menu4c.png' : './menu4b.png')" style="vertical-align: middle; width: 130px"></span>
         </li>
       </ul>
     </div>
@@ -63,10 +63,11 @@
 
 <script>
 import $ from 'jquery'
+import wx from 'weixin-js-sdk'
 import fullpage from 'fullpage.js'
 import storage from '@/lib/storage';
 import {
-  visitCounts
+  visitCounts, questWechat
 } from '@/api/index';
 import {
   mapState
@@ -81,12 +82,14 @@ export default {
       menuActive1: false,
       menuActive2: false,
       menuActive3: false,
-      menuActive4: false
+      menuActive4: false,
+      localInfo: ''
     }
   },
   created(){
     for (let i = 0; i < 5; i++){
       if (storage.get(`detail${i}`)) {
+        this.localInfo += `_detail${i}@${storage.get(`detail${i}`)}`
         this[`menuActive${i}`] = true
       }
     }
@@ -97,6 +100,7 @@ export default {
   })
 },
   mounted() {
+    this.handleWechatShare()
     const that = this;
     $('#fullpage').fullpage({
       afterRender(event) {
@@ -134,24 +138,87 @@ export default {
     });
   },
   methods: {
+    handleWechatShare() {
+      const that = this
+      let url = ''
+      if (device.ios()) {
+        url = this.$store.state.userInfo.url.split('#')[0]
+      } else {
+        url = window.location.href.split('#')[0]
+      }
+      questWechat(url).then(res => {
+        wx.config({
+          debug: false,
+          appId: res.appId,
+          timestamp: res.timestamp,
+          nonceStr: res.nonceStr,
+          signature: res.signature,
+          jsApiList: ['checkJsApi', 'onMenuShareTimeline',
+            'onMenuShareAppMessage'
+          ]
+        })
+      })
+      wx.ready(function() {
+        const imgUrl = 'http://event.obstm.com/upload/shareIcon.jpg'
+        const _localInfo = that.localInfo.substring(1,that.localInfo.length);
+        var link = `http://event.obstm.com/?stroge=${_localInfo}`
+        wx.onMenuShareTimeline({
+          title: 'This is ULTIMATE', //分享卡片标题
+          link: link,
+          imgUrl: imgUrl, // 自定义图标
+          trigger: function(res) {
+            // 不要尝试在trigger中使用ajax异步请求修改本次分享的内容，因为客户端分享操作是一个同步操作，这时候使用ajax的回包会还没有返回.
+            //alert('click shared');
+          },
+          success: function(res) {
+            //alert('shared success');
+            //some thing you should do
+          },
+          cancel: function(res) {
+            //alert('shared cancle');
+          },
+          fail: function(res) {
+            //alert(JSON.stringify(res));
+          }
+        });
+
+        wx.onMenuShareAppMessage({
+          desc: 'adidas neo首度空降YOHOOD,扫码获得自己的酷玩瞬间', //摘要,如果分享到朋友圈的话，不显示摘要。
+          title: 'This is ULTIMATE', //分享卡片标题
+          link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          imgUrl: imgUrl, // 自定义图标
+          type: 'link', // 分享类型,music、video或link，不填默认为link
+          dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+          success: function() {
+            // 用户确认分享后执行的回调函数
+          },
+          cancel: function() {
+            // 用户取消分享后执行的回调函数
+          }
+        })
+      })
+    },
     hanldeClickToNext(){
       $.fn.fullpage.moveTo(2);
     },
     handleClickMenu(item) {
       const detail = storage.get(`detail${item}`)
+      if (this.$store.state.userInfo.isShare && !detail) {
+          return
+      }
       visitCounts(`menu${item}`).then(res => {
         console.log(res);
       })
       if (detail) {
-        //window.location.href = `http://event.obstm.com/adidasShare?name=${item}&media=${detail.split('.')[0]}&type=${detail.split('.')[1]}`
-        this.$router.push({
-          name: '3',
-          query: {
-            name: item,
-            media: detail.split('.')[0],
-            type: detail.split('.')[1]
-          }
-        })
+        window.location.href = `http://event.obstm.com/adidasShare?content=${item}_${detail.split('.')[0]}_${detail.split('.')[1]}`
+        // this.$router.push({
+        //   name: '3',
+        //   query: {
+        //     name: item,
+        //     media: detail.split('.')[0],
+        //     type: detail.split('.')[1]
+        //   }
+        // })
       } else {
         this.$router.push({
           name: '2',

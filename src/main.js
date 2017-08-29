@@ -21,6 +21,28 @@ router.beforeEach((to, from, next)=>{
   if (!store.state.userInfo.url) {
    store.dispatch('setUrl', document.URL)
   }
+  const query = to.query
+  if (query.stroge) {
+    const strogeArr = query.stroge.split('_')
+    strogeArr.forEach((item)=> {
+      const _item = item.split('@')
+      storage.set(_item[0], _item[1])
+    })
+    delete query['stroge']
+  }
+  if (query.from) {
+    if (to.path == '/' && from.path == '/') {
+      store.dispatch('markShare', true)
+    } else {
+      store.dispatch('markShare', false)
+    }
+    delete query['from']
+    delete query['isappinstalled']
+    next({
+      name: '0',
+      query
+    })
+  }
   next();
 })
 

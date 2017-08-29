@@ -86,7 +86,7 @@ export default {
       }
       questWechat(url).then(res => {
         wx.config({
-          debug: true,
+          debug: false,
           appId: res.appId,
           timestamp: res.timestamp,
           nonceStr: res.nonceStr,
